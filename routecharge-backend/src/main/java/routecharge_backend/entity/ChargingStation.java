@@ -1,5 +1,7 @@
 package routecharge_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.locationtech.jts.geom.Point;
 
@@ -17,12 +19,26 @@ public class ChargingStation {
     private Integer powerKw;
     private Boolean isFastCharger;
 
+    @JsonIgnore // Infinite recursion / envelope döngüsünü engeller
     @Column(columnDefinition = "geometry(Point,4326)")
     private Point location;
 
     public ChargingStation() {}
 
-    // Getter ve Setter Metotları
+    // --- JSON ÇIKTISINA ÖZEL ENLEM VE BOYLAM ALANLARI ---
+
+    @JsonProperty("latitude")
+    public Double getLatitude() {
+        return location != null ? location.getY() : null;
+    }
+
+    @JsonProperty("longitude")
+    public Double getLongitude() {
+        return location != null ? location.getX() : null;
+    }
+
+    // --- STANDART GETTER VE SETTER METOTLARI ---
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
